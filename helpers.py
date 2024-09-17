@@ -46,6 +46,36 @@ def get_random_image():
 def write_quote_on_image(quote, author, image_url):
     """Write quote on image."""
 
+    def getsize(font, text):
+        left, top, right, bottom = font.getbbox(text)
+        return right - left, bottom - top
+    
+    def draw_text_wrapped(draw, text, font, position, max_width):
+        """
+        Draw text on the image with wrapping based on the max_width.
+        """
+        lines = []
+        words = text.split()
+        current_line = ''
+        
+        for word in words:
+            test_line = f'{current_line} {word}'.strip()
+            text_width = getsize(font, test_line)[0]
+            
+            if text_width <= max_width:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word
+        
+        lines.append(current_line)  # Add the last line
+        
+        # Draw each line on the image
+        y_position = position[1]
+        for line in lines:
+            draw.text((position[0], y_position), line, font=font, fill="white")
+            y_position += getsize(font, line)[1]  # Move to the next line
+
     # Fetch the image data from url
     image_response = requests.get(image_url)
 
@@ -57,15 +87,18 @@ def write_quote_on_image(quote, author, image_url):
 
     # Load font 
     font_size = 48
-    font = ImageFont.truetype("PlayfairDisplay-Regular.ttf", font_size)
+    font = ImageFont.truetype("PlayfairDisplay-Bold.ttf", font_size)
 
     # Define text position and color
     quote_position = (50, 50)
-    author_position = (200, 150)
+    author_position = (200, 250)
     text_color = (255, 255, 255) # White color
 
-    # Draw quote on the image
-    draw.text(quote_position, quote, font=font, fill=text_color)
+    # Image width to wrap the text, considering margins
+    max_width = img.width - 2 * quote_position[0]
+
+    # Draw wrapped quote on the image
+    draw_text_wrapped(draw, quote, font, quote_position, max_width)
 
     # Draw author on the image
     draw.text(author_position, author, font=font, fill=text_color)
