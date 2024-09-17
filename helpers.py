@@ -1,5 +1,5 @@
 import requests
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 from io import BytesIO
 
 def get_random_quote():
@@ -82,8 +82,12 @@ def write_quote_on_image(quote, author, image_url):
     # Open image content as file-like object to use Pillow library
     img = Image.open(BytesIO(image_response.content))
 
+    # Adjust the brightness
+    enhancer = ImageEnhance.Brightness(img)
+    dark_img = enhancer.enhance(0.5)
+
     # Use draw function
-    draw = ImageDraw.Draw(img)
+    draw = ImageDraw.Draw(dark_img)
 
     # Load font 
     font_size = 48
@@ -104,7 +108,7 @@ def write_quote_on_image(quote, author, image_url):
     draw.text(author_position, author, font=font, fill=text_color)
 
     # Save the modified image
-    img.save("static/images/image_with_quote.jpg")
+    dark_img.save("static/images/image_with_quote.jpg")
 
 
 
