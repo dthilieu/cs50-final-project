@@ -3,3 +3,4 @@ secrets.txt
 .venv
 .DS_Store
 PlayfairDisplay-Bold.ttf
+kill-process.py

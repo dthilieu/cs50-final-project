@@ -1,6 +1,7 @@
 import requests
 from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 from io import BytesIO
+from flask import render_template
 
 def get_random_quote():
     """Get any random quote from ZenQuotes API."""
@@ -40,41 +41,84 @@ def get_random_image():
         image = response.json()
         return image
     else:
-        return None
+        return "Too much request, slow down!", response.status_code
 
+def apology(message, code=400):
+    """Render message as an apology to user."""
+
+    def escape(s):
+        """
+        Escape special characters.
+
+        https://github.com/jacebrowning/memegen#special-characters
+        """
+        for old, new in [
+            ("-", "--"),
+            (" ", "-"),
+            ("_", "__"),
+            ("?", "~q"),
+            ("%", "~p"),
+            ("#", "~h"),
+            ("/", "~s"),
+            ('"', "''"),
+        ]:
+            s = s.replace(old, new)
+        return s
+
+    return render_template("apology.html", top=code, bottom=escape(message)), code
 
 def write_quote_on_image(quote, author, image_url):
     """Write quote on image."""
 
     def getsize(font, text):
+        """
+        Get size of text with given font size (width and height)
+        """
         left, top, right, bottom = font.getbbox(text)
         return right - left, bottom - top
     
-    def draw_text_wrapped(draw, text, font, position, max_width):
+    def draw_text_wrapped(draw, font_size, position, max_width):
         """
         Draw text on the image with wrapping based on the max_width.
         """
         lines = []
-        words = text.split()
+        words = quote.split()
         current_line = ''
+
+        # Load font for quote
+        font_path = "static/fonts/ComicNeue-Bold.ttf"
+        font = ImageFont.truetype(font_path, font_size)
         
+        # Seperate quote into lines with length <= max_width
         for word in words:
             test_line = f'{current_line} {word}'.strip()
-            text_width = getsize(font, test_line)[0]
+            quote_width = getsize(font, test_line)[0]
             
-            if text_width <= max_width:
+            if quote_width <= max_width:
                 current_line = test_line
             else:
                 lines.append(current_line)
                 current_line = word
         
-        lines.append(current_line)  # Add the last line
+        # Add the last line
+        lines.append(current_line) 
         
         # Draw each line on the image
         y_position = position[1]
         for line in lines:
             draw.text((position[0], y_position), line, font=font, fill="white")
-            y_position += getsize(font, line)[1]  # Move to the next line
+
+            # Move to the next line
+            y_position += getsize(font, line)[1] * 1.5  
+        
+        # Load font for author
+        font_path = "static/fonts/ComicNeue-Italic.ttf"
+        font = ImageFont.truetype(font_path, font_size - 20)
+
+        # Draw author on the image
+        author_width = getsize(font, author)[0]
+        author_x_position = max_width - author_width
+        draw.text((author_x_position, y_position), author, font=font, fill="white")
 
     # Fetch the image data from url
     image_response = requests.get(image_url)
@@ -89,23 +133,25 @@ def write_quote_on_image(quote, author, image_url):
     # Use draw function
     draw = ImageDraw.Draw(dark_img)
 
-    # Load font 
-    font_size = 48
-    font = ImageFont.truetype("PlayfairDisplay-Bold.ttf", font_size)
-
-    # Define text position and color
-    quote_position = (50, 50)
-    author_position = (200, 250)
-    text_color = (255, 255, 255) # White color
+    # Define quote first line position
+    quote_position = (100, 100)
 
     # Image width to wrap the text, considering margins
-    max_width = img.width - 2 * quote_position[0]
+    max_width = img.width - (1.6 * quote_position[0] )
 
-    # Draw wrapped quote on the image
-    draw_text_wrapped(draw, quote, font, quote_position, max_width)
+    # Length of quote
+    quote_length = len(quote.split())
 
-    # Draw author on the image
-    draw.text(author_position, author, font=font, fill=text_color)
+    # Different font size based on length of quote
+    if quote_length < 15:
+        font_size = 80
+    elif quote_length > 25:
+        font_size = 60
+    else:
+        font_size = 70
+
+    # Draw wrapped quote and author on the image
+    draw_text_wrapped(draw, font_size, quote_position, max_width)
 
     # Save the modified image
     dark_img.save("static/images/image_with_quote.jpg")
