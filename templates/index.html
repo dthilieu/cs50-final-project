@@ -15,11 +15,11 @@
     
     <body>
         
-        <h1>{{ quote }}</h1>
-        <h2>{{ author }}</h2>
-        <img src='{{ photo["urls"]["regular"] }}' alt='{{ photo["description"] }}' style="width: 100%">
-
-        <img src="{{ url_for('static', filename='images/image_with_quote.jpg') }}" alt="image with quote" style="width: 100%">
+        <div class="container">
+            <div class="card">
+                <img src="{{ url_for('static', filename='images/image_with_quote.jpg') }}" alt="image with quote" style="width: 100%">
+            </div>
+        </div>
         
     </body>
 

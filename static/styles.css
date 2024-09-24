@@ -1,0 +1,27 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    width: 100%;
+}
+
+:root {
+    --Black: rgb(0, 0, 0)
+}
+
+.container {
+    background-color: var(--Black);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.card {
+    max-width: 650px;
+    width: 95%;
+}
