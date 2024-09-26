@@ -18,7 +18,11 @@
         
         <div class="container">
             <div class="card">
-                <img class="image-with-quote" id="quoteImage" src="{{ url_for('static', filename='images/quote_image.jpg') }}" alt="image with quote">
+                <div class="image-container">
+                    <img class="quote-image" id="quoteImage" src="{{ url_for('static', filename='images/quote_image.jpg') }}" alt="image with quote">
+                    <!-- Loading Spinner -->
+                    <div class="spinner" id="loadingSpinner"></div> 
+                </div>
 
                 <div class="btn-container">
                     <div class="btn-function">&laquo; Previous</div>
