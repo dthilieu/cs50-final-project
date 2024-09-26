@@ -10,9 +10,6 @@
         <!-- Link to styles sheet -->
         <link rel="stylesheet" href="/static/styles.css">
 
-        <!-- Link to javascript file -->
-        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-
         <title>Quote Generator</title>
 
     </head>
@@ -27,28 +24,12 @@
                     <div class="btn-function">&laquo; Previous</div>
                     <div class="btn-function">Like & Save &#10084;</div>
                     <div class="btn-function" id="nextButton">Next &raquo;</div>
-
-                    <script>
-                        document.getElementById("nextButton").onclick = function() {
-                            fetch("/")
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error("Cannot fetch new image quote")
-                                }
-
-                                // Update image source to refresh it
-                                const image = document.getElementById("quoteImage");
-
-                                // Add timestamp to avoid caching
-                                image.src = "static/images/quote_image.jpg?" + new Date().getTime();
-                            })
-
-                        };
-                    </script>
                 </div>
             </div>
         </div>
         
+        <!-- Link to javascript file -->
+        <script src="/static/js/script.js"></script>
     </body>
 
 </html>
