@@ -2,6 +2,8 @@ import requests
 from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 from io import BytesIO
 from flask import render_template
+import shutil
+import os
 
 def get_random_quote():
     """Get any random quote from ZenQuotes API."""
@@ -152,6 +154,16 @@ def write_quote_on_image(quote, author, image_url):
 
     # Draw wrapped quote and author on the image
     draw_text_wrapped(draw, font_size, quote_position, max_width)
+
+    # Image path
+    current_image_path = 'static/images/quote_image.jpg'
+    previous_image_path = 'static/images/previous_quote_image.jpg'
+
+    # Check if current image exists before copying
+    if os.path.exists(current_image_path):
+        # Use shutil to copy the current image to the previous image location
+        import shutil
+        shutil.copy(current_image_path, previous_image_path)
 
     # Save the modified image
     dark_img.save("static/images/quote_image.jpg")

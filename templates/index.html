@@ -22,11 +22,12 @@
                     <img class="quote-image" id="quoteImage" src="{{ url_for('static', filename='images/quote_image.jpg') }}" alt="image with quote">
                     <!-- Loading Spinner -->
                     <div class="spinner" id="loadingSpinner"></div> 
+                    <div id="savedMessage" class="saved-message">Saved!</div>
                 </div>
 
                 <div class="btn-container">
-                    <div class="btn-function">&laquo; Previous</div>
-                    <div class="btn-function">Like & Save &#10084;</div>
+                    <div class="btn-function" id="previousButton">&laquo; Previous</div>
+                    <div class="btn-function" id="saveButton">Like & Save &#10084;</div>
                     <div class="btn-function" id="nextButton">Next &raquo;</div>
                 </div>
             </div>
