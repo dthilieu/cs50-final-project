@@ -154,7 +154,7 @@ def write_quote_on_image(quote, author, image_url):
     draw_text_wrapped(draw, font_size, quote_position, max_width)
 
     # Save the modified image
-    dark_img.save("static/images/image_with_quote.jpg")
+    dark_img.save("static/images/quote_image.jpg")
 
 
 

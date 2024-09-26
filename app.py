@@ -19,7 +19,7 @@ def index():
     # Make sure image response is 200 no error
     try:
         write_quote_on_image(quote, author, photo["urls"]["regular"])
-        return render_template("index.html", quote=quote, author=author, photo=photo)
+        return render_template("index.html")
     except:
         # If error, show apology
         return apology(photo[0], photo[1])
