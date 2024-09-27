@@ -1,5 +1,6 @@
 const spinner = document.getElementById("loadingSpinner");
 const image = document.getElementById("quoteImage");
+const imageContainer = document.getElementById("imageContainer");
 
 // Next button clicked
 document.getElementById("nextButton").addEventListener("click", function() {
@@ -36,21 +37,36 @@ document.getElementById("nextButton").addEventListener("click", function() {
                 image.classList.remove("loading"); 
             });
     }
+
+    // Update the data-source attribute to "current"
+    imageContainer.setAttribute("data-source", "current");
 });
 
 // Previous button clicked
 document.getElementById("previousButton").addEventListener("click", function() {
     // Change source of image to previous one
     image.src = "static/images/previous_quote_image.jpg?" + new Date().getTime();
+
+    // Update the data-source attribute to "previous"
+    imageContainer.setAttribute("data-source", "previous");
 });
 
 // Save button clicked
 document.getElementById("saveButton").addEventListener("click", function() {
     // Darken image
-    image.style.filter = "brightness(50%";
+    image.style.filter = "brightness(50%)";
 
-    // Save current image
-    fetch("/save", {method: "POST"})
+    // Get the source of the displayed image (either 'current' or 'previous')
+    const source = imageContainer.getAttribute('data-source');
+
+    // Send a POST request to save the current displayed quote image
+    fetch("/save", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ source: source })  // Send the source in the request
+    })
     .then(response => response.json())
     .then(data => {
         // Log the success message
