@@ -6,6 +6,7 @@
 
 body {
     width: 100%;
+    background-color: var(--Black);
 }
 
 :root {
@@ -16,13 +17,23 @@ body {
     --Tangerine-Yellow : rgb(255, 204, 0);
 }
 
-.container {
-    background-color: var(--Black);
+header {
+    display: flex;
+    justify-content: center;
 
+    padding: 20px;
+}
+
+.saved-quotes {
+    color: var(--White);
+    
+}
+
+.container {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    margin-top: 50px;
 }
 
 .card {

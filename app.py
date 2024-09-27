@@ -41,8 +41,14 @@ def index():
 
 @app.route("/save", methods=["POST"])
 def save_quote_image():
-    data = request.json  # Get the JSON data from the frontend
-    source = data.get('source')  # Get whether the current image is "current" or "previous"
+    """
+    Save current displayed quote image information {quote, author, image_id}
+    """
+    # Get the JSON data from the frontend
+    data = request.json  
+
+    # Get whether the current image is "current" or "previous"
+    source = data.get('source')  
     
     # Determine which quote is being saved based on source
     if source == 'current':
@@ -58,6 +64,14 @@ def save_quote_image():
     session['saved_quotes'].append(quote_to_save)
 
     return jsonify({'message': 'Quote saved successfully!'}), 200
+
+@app.route("/savedquotes")
+def saved_quotes():
+    """
+    Get a list of current saved quotes and display using HTML
+    """
+
+    return render_template("saved_quotes.html", saved_quotes=session['saved_quotes'])
 
 if __name__ == "__main__":
     app.run(debug=True)

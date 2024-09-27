@@ -1,40 +1,27 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
 
-<html lang="en">
+{% block title%}
+    Random Quote
+{% endblock %}
 
-    <head>
-
-        <meta charset="utf-8">
-        <meta name="viewport" content="initial-scale=1, width=device-width">
-
-        <!-- Link to styles sheet -->
-        <link rel="stylesheet" href="/static/styles.css">
-
-        <title>Quote Generator</title>
-
-    </head>
-    
-    <body>
-        
-        <div class="container">
-            <div class="card">
-                <div class="image-container" id="imageContainer" data-source="current">
-                    <img class="quote-image" id="quoteImage" src="{{ url_for('static', filename='images/quote_image.jpg') }}" alt="image with quote">
-                    <!-- Loading Spinner -->
-                    <div class="spinner" id="loadingSpinner"></div> 
-                    <div id="savedMessage" class="saved-message">Saved!</div>
-                </div>
-
-                <div class="btn-container">
-                    <div class="btn-function" id="previousButton">&laquo; Previous</div>
-                    <div class="btn-function" id="saveButton">Like & Save &#10084;</div>
-                    <div class="btn-function" id="nextButton">Next &raquo;</div>
-                </div>
-            </div>
+{% block main %}
+    <div class="card">
+        <div class="image-container" id="imageContainer" data-source="current">
+            <img class="quote-image" id="quoteImage" src="{{ url_for('static', filename='images/quote_image.jpg') }}" alt="image with quote">
+            <!-- Loading Spinner -->
+            <div class="spinner" id="loadingSpinner"></div> 
+            <div id="savedMessage" class="saved-message">Saved!</div>
         </div>
-        
-        <!-- Link to javascript file -->
-        <script src="/static/js/script.js"></script>
-    </body>
 
-</html>
+        <div class="btn-container">
+            <div class="btn-function" id="previousButton">&laquo; Previous</div>
+            <div class="btn-function" id="saveButton">Like & Save &#10084;</div>
+            <div class="btn-function" id="nextButton">Next &raquo;</div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <!-- Link to javascript file -->
+    <script src="/static/js/home.js"></script>
+{% endblock %}

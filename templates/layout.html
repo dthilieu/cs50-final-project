@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="initial-scale=1, width=device-width">
+
+        <!-- Link to styles sheet -->
+        <link rel="stylesheet" href="/static/styles.css">
+
+        <title>Quote Generator: {% block title %}{% endblock %}</title>
+
+    </head>
+    
+    <body>
+        <header>
+            <div class="saved-quotes btn-function" id="savedQuotes">Saved Quotes</div>
+        </header>
+        
+        <main class="container">
+            {% block main %}{% endblock %}
+        </main>
+        
+        {% block script %}{% endblock %}
+    </body>
+
+</html>

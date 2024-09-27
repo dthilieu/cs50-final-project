@@ -1,6 +1,7 @@
 const spinner = document.getElementById("loadingSpinner");
 const image = document.getElementById("quoteImage");
 const imageContainer = document.getElementById("imageContainer");
+const savedQuotes = document.getElementById("savedQuotes");
 
 // Next button clicked
 document.getElementById("nextButton").addEventListener("click", function() {
@@ -90,4 +91,18 @@ document.getElementById("saveButton").addEventListener("click", function() {
     .catch(error => {
         console.error("Error:", error);
     });
+});
+
+// Saved quotes button clicked
+savedQuotes.addEventListener("click", function() {
+    // Fetch "/savedquotes" route to get saved quotes list
+    fetch("/savedquotes")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Cannot fetch saved quotes!")
+            }
+        })
+        .catch(error => {
+            console.error("There was a problem fetching saved quotes", error);
+        })
 });
