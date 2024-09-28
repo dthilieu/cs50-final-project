@@ -10,6 +10,29 @@ app.secret_key = 'supersecretkey'
 
 @app.route("/")
 def index():
+    """
+    # Check if the request is an AJAX (fetch) request
+    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+        # Only clear session during a full page load, not for fetch requests
+        session.clear()
+        
+        # Path to the previous quote image
+        previous_image_path = os.path.join(app.static_folder, 'images', 'previous_quote_image.jpg')
+
+        # Path to the current quote image
+        current_image_path = os.path.join(app.static_folder, 'images', 'quote_image.jpg')
+
+        # Check if the file exists and delete it to reset
+        for image_path in [previous_image_path, current_image_path]:
+            if os.path.exists(image_path):
+                os.remove(image_path)
+    """
+
+    # Check if the request is an AJAX (fetch) request
+    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
+        # Only clear saved_quotes session during a full page load, not for fetch requests
+         session.pop('saved_quotes', None)
+        
     # Get random quote from API
     quote_data = get_random_quote()
 
@@ -65,13 +88,14 @@ def save_quote_image():
 
     return jsonify({'message': 'Quote saved successfully!'}), 200
 
-@app.route("/savedquotes")
+@app.route("/saved-quotes")
 def saved_quotes():
     """
     Get a list of current saved quotes and display using HTML
     """
-
-    return render_template("saved_quotes.html", saved_quotes=session['saved_quotes'])
+    # Ensure that saved_quotes list is exist incase of empty saved quotes
+    saved_quotes = session.get('saved_quotes', [])
+    return render_template("saved_quotes.html", saved_quotes=saved_quotes)
 
 if __name__ == "__main__":
     app.run(debug=True)

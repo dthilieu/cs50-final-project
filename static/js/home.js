@@ -1,7 +1,6 @@
 const spinner = document.getElementById("loadingSpinner");
 const image = document.getElementById("quoteImage");
 const imageContainer = document.getElementById("imageContainer");
-const savedQuotes = document.getElementById("savedQuotes");
 
 // Next button clicked
 document.getElementById("nextButton").addEventListener("click", function() {
@@ -18,7 +17,13 @@ document.getElementById("nextButton").addEventListener("click", function() {
         image.classList.add("loading"); 
 
         // Generate new random quote image
-        fetch("/")
+        fetch("/", {
+            method: "GET",
+            // Ensure header is set
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"  
+            }
+        })
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Cannot fetch new image quote")
@@ -45,11 +50,30 @@ document.getElementById("nextButton").addEventListener("click", function() {
 
 // Previous button clicked
 document.getElementById("previousButton").addEventListener("click", function() {
-    // Change source of image to previous one
-    image.src = "static/images/previous_quote_image.jpg?" + new Date().getTime();
+    // Previous image path
+    const previousImagePath = '/static/images/previous_quote_image.jpg';
 
-    // Update the data-source attribute to "previous"
-    imageContainer.setAttribute("data-source", "previous");
+    // Check if the image exists using fetch with HEAD method
+    fetch(previousImagePath, { method: 'HEAD' })
+        .then(response => {
+            if (response.ok) {
+                // Image exists, so display it
+                console.log("Previous image exists!");
+
+                // Change source of image to previous one
+                image.src = "static/images/previous_quote_image.jpg?" + new Date().getTime();
+
+                // Update the data-source attribute to "previous"
+                imageContainer.setAttribute("data-source", "previous");
+            } else {
+                // Image does not exist, handle this case
+                console.log("Previous image does not exist.");
+                alert("No previous quote available.");
+            }
+        })
+        .catch(error => {
+            console.log("Error checking previous image:", error);
+        });
 });
 
 // Save button clicked
@@ -91,18 +115,4 @@ document.getElementById("saveButton").addEventListener("click", function() {
     .catch(error => {
         console.error("Error:", error);
     });
-});
-
-// Saved quotes button clicked
-savedQuotes.addEventListener("click", function() {
-    // Fetch "/savedquotes" route to get saved quotes list
-    fetch("/savedquotes")
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Cannot fetch saved quotes!")
-            }
-        })
-        .catch(error => {
-            console.error("There was a problem fetching saved quotes", error);
-        })
 });

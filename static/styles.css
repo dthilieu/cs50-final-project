@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    color: var(--White);
 }
 
 body {
@@ -86,9 +87,6 @@ header {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 30px;
-    border: 1px solid var(--Black);
-    padding: 10px;
-    border-radius: 50%;
     color: white;
     opacity: 0;  /* Initially hidden */
 }
