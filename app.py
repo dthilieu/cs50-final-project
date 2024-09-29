@@ -1,9 +1,16 @@
 from flask import Flask, render_template, session, jsonify, request
+from flask_session import Session
 from helpers import get_random_quote, get_random_image, write_quote_on_image, apology
 import time, os, shutil
+import copy
 
 # Configure application
 app = Flask(__name__)
+
+# Configure session to use filesystem (instead of signed cookies)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 # Required to use sessions
 app.secret_key = 'supersecretkey'  
@@ -27,12 +34,12 @@ def index():
             if os.path.exists(image_path):
                 os.remove(image_path)
     """
-
+  
     # Check if the request is an AJAX (fetch) request
     if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
         # Only clear saved_quotes session during a full page load, not for fetch requests
          session.pop('saved_quotes', None)
-        
+
     # Get random quote from API
     quote_data = get_random_quote()
 
@@ -62,11 +69,11 @@ def index():
         # If error, show apology
         return apology(photo[0], photo[1])
 
+"""
 @app.route("/save", methods=["POST"])
 def save_quote_image():
-    """
-    Save current displayed quote image information {quote, author, image_id}
-    """
+    # Save current displayed quote image information {quote, author, image_id}
+
     # Get the JSON data from the frontend
     data = request.json  
 
@@ -87,6 +94,39 @@ def save_quote_image():
     session['saved_quotes'].append(quote_to_save)
 
     return jsonify({'message': 'Quote saved successfully!'}), 200
+"""
+
+@app.route("/save", methods=["POST"])
+def save_quote_image():
+    """
+    Save current displayed quote image information {quote, author, image_id}
+    """
+    # Get the JSON data from the frontend
+    data = request.json  
+
+    # Get whether the current image is "current" or "previous"
+    source = data.get('source')  
+    
+    # Determine which quote is being saved based on source
+    if source == 'current':
+        quote_to_save = session.get('current_quote', None)  # Use get to avoid KeyError
+    else:
+        quote_to_save = session.get('previous_quote', None)
+
+    # Check if quote_to_save is valid
+    if quote_to_save is None:
+        return jsonify({'message': 'No quote to save!'}), 400
+
+    # Initialize saved_quotes in the session if it doesn't exist
+    if 'saved_quotes' not in session:
+        # Initialize the list if not present
+        session['saved_quotes'] = []  
+    
+    # Add the quote to the saved_quotes list
+    session['saved_quotes'].append(quote_to_save)
+
+    return jsonify({'message': 'Quote saved successfully!'}), 200
+
 
 @app.route("/saved-quotes")
 def saved_quotes():

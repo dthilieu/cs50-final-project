@@ -4,3 +4,4 @@ secrets.txt
 .DS_Store
 PlayfairDisplay-Bold.ttf
 kill-process.py
+flask_session/
