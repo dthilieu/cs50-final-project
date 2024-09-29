@@ -168,6 +168,27 @@ def write_quote_on_image(quote, author, image_url):
     # Save the modified image
     dark_img.save("static/images/quote_image.jpg")
 
+def clear_saved_quotes_folder(static_folder):
+    """
+    Function to clear the saved_quotes folder
+    """
+
+    # Define the path to the saved_quotes folder
+    SAVED_QUOTES_FOLDER = os.path.join(static_folder, 'images', 'saved-quotes')
+
+    # Check if the folder exists
+    if os.path.exists(SAVED_QUOTES_FOLDER):
+
+        # Clear the folder's contents but keep the directory
+        for filename in os.listdir(SAVED_QUOTES_FOLDER):
+            file_path = os.path.join(SAVED_QUOTES_FOLDER, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    # Remove the file
+                    os.unlink(file_path)  
+            except Exception as e:
+                print(f"Failed to delete {file_path}. Reason: {e}")
+
 
 
 

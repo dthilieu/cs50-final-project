@@ -1,6 +1,6 @@
 from flask import Flask, render_template, session, jsonify, request
 from flask_session import Session
-from helpers import get_random_quote, get_random_image, write_quote_on_image, apology
+from helpers import get_random_quote, get_random_image, write_quote_on_image, apology, clear_saved_quotes_folder
 import time, os, shutil
 import copy
 
@@ -39,6 +39,7 @@ def index():
     if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
         # Only clear saved_quotes session during a full page load, not for fetch requests
          session.pop('saved_quotes', None)
+         clear_saved_quotes_folder(app.static_folder)
 
     # Get random quote from API
     quote_data = get_random_quote()
@@ -49,17 +50,6 @@ def index():
 
     # Get random photo from API
     photo = get_random_image()
-
-    # If there is a current quote and image, store them as previous ones
-    if 'current_quote' in session:
-        session['previous_quote'] = session['current_quote']
-
-    # Update the current quote and image in session
-    session['current_quote'] = {
-        'quote': quote,
-        'author': author,
-        'image_id': photo["id"]
-    }
 
     # Make sure image response is 200 no error
     try:
@@ -109,13 +99,16 @@ def save_quote_image():
     
     # Determine which quote is being saved based on source
     if source == 'current':
-        quote_to_save = session.get('current_quote', None)  # Use get to avoid KeyError
+        image_path = 'static/images/quote_image.jpg'
     else:
-        quote_to_save = session.get('previous_quote', None)
+        image_path = 'static/images/previous_quote_image.jpg'
 
-    # Check if quote_to_save is valid
-    if quote_to_save is None:
-        return jsonify({'message': 'No quote to save!'}), 400
+    # Generate a timestamp ID for the new saved image
+    timestamp_id = int(time.time())
+    saved_image_path = f'static/images/saved-quotes/saved_quote_{timestamp_id}.jpg'
+
+    # Copy the current image to the new saved image
+    shutil.copy(image_path, saved_image_path)
 
     # Initialize saved_quotes in the session if it doesn't exist
     if 'saved_quotes' not in session:
@@ -123,7 +116,7 @@ def save_quote_image():
         session['saved_quotes'] = []  
     
     # Add the quote to the saved_quotes list
-    session['saved_quotes'].append(quote_to_save)
+    session['saved_quotes'].append(f'saved_quote_{timestamp_id}.jpg')
 
     return jsonify({'message': 'Quote saved successfully!'}), 200
 

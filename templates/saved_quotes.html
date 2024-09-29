@@ -6,24 +6,11 @@
 
 {% block main %}
     {% if saved_quotes %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Quote ID</th>
-                    <th>Image ID</th>
-                    <th>Author</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for quote in saved_quotes %}
-                    <tr>
-                        <td>{{ quote['quote'] }}</td>
-                        <td>{{ quote['image_id'] }}</td>
-                        <td>{{ quote['author'] }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        {% for quote in saved_quotes %}
+            <div class="card">
+                <img class="quote-image" src="/static/images/saved-quotes/{{ quote }}" alt="Image">
+            </div>
+        {% endfor %}
     {% else %}
         <p>No saved quotes yet.</p>
     {% endif %}
