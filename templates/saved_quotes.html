@@ -1,16 +1,18 @@
 {% extends "layout.html" %}
 
+{% block link %}
+    <link rel="stylesheet" href="../static/css/saved-quotes.css">
+{% endblock %}
+
 {% block title %}
     Saved Quotes
 {% endblock %}
 
 {% block main %}
     {% if saved_quotes %}
-        <div class="saved-quotes">
+        <div class="saved-quotes-container">
             {% for quote in saved_quotes %}
-                <div class="card">
-                    <img class="quote-image" src="/static/images/saved-quotes/{{ quote }}" alt="Image">
-                </div>
+                <img class="quote-image" src="/static/images/saved-quotes/{{ quote }}" alt="Image">
             {% endfor %}
         </div>
     {% else %}
