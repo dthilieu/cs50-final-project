@@ -6,11 +6,13 @@
 
 {% block main %}
     {% if saved_quotes %}
-        {% for quote in saved_quotes %}
-            <div class="card">
-                <img class="quote-image" src="/static/images/saved-quotes/{{ quote }}" alt="Image">
-            </div>
-        {% endfor %}
+        <div class="saved-quotes">
+            {% for quote in saved_quotes %}
+                <div class="card">
+                    <img class="quote-image" src="/static/images/saved-quotes/{{ quote }}" alt="Image">
+                </div>
+            {% endfor %}
+        </div>
     {% else %}
         <p>No saved quotes yet.</p>
     {% endif %}

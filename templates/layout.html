@@ -7,8 +7,11 @@
         <meta charset="utf-8">
         <meta name="viewport" content="initial-scale=1, width=device-width">
 
-        <!-- Link to styles sheet -->
-        <link rel="stylesheet" href="/static/styles.css">
+        <!-- Link to general css file -->
+        <link rel="stylesheet" href="/static/css/general.css">
+
+        <!-- Link to specific css file -->
+         {% block link %}{% endblock %}
 
         <title>Quote Generator: {% block title %}{% endblock %}</title>
 
