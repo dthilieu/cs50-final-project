@@ -1,11 +1,26 @@
 .saved-quotes-container {
     display: grid;
     place-items: center;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 10px;
+    grid-template-columns: 1fr;
+    /* column-gap: 10px; */
     row-gap: 10px;
 
     width: 95%;
+}
+
+/* Styles for tablets and larger screens */
+@media screen and (min-width: 768px) {
+    .saved-quotes-container {
+        grid-template-columns: 1fr 1fr;
+        column-gap: 10px;
+    }
+}
+
+/* Styles for desktop and larger screens */
+@media screen and (min-width: 1024px) {
+    .saved-quotes-container {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
 }
 
 .quote-image {
