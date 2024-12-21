@@ -1,8 +1,3 @@
-.saved-quotes {
-    color: var(--White);
-    
-}
-
 .card {
     max-width: 650px;
     width: 95%;
@@ -19,6 +14,7 @@
 
 .quote-image {
     width: 100%;
+    border-radius: 10px;
 
     transition: filter 0.3s ease; /* Smooth transition for filter changes */
 }
