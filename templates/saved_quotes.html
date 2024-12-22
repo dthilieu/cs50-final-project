@@ -16,7 +16,12 @@
     {% if saved_quotes %}
         <div class="saved-quotes-container">
             {% for quote in saved_quotes %}
-                <img class="quote-image" src="{{ quote.image_path }}" alt="Image">
+                <div class="saved-quote" data-image-id="{{ quote.image_id }}">
+                    <img class="quote-image" src="{{ quote.image_path }}" alt="Image">
+                    <button class="remove-button" data-image-id="{{ quote.image_id }}">
+                        &#10084;
+                    </button>
+                </div>
             {% endfor %}
         </div>
     {% else %}
