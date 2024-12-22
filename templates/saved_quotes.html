@@ -16,7 +16,7 @@
     {% if saved_quotes %}
         <div class="saved-quotes-container">
             {% for quote in saved_quotes %}
-                <img class="quote-image" src="/static/images/saved-quotes/{{ quote }}" alt="Image">
+                <img class="quote-image" src="{{ quote.image_path }}" alt="Image">
             {% endfor %}
         </div>
     {% else %}

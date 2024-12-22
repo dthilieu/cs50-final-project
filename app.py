@@ -103,9 +103,16 @@ def save_quote_image():
     else:
         image_path = 'static/images/previous_quote_image.jpg'
 
-    # Generate a timestamp ID for the new saved image
-    timestamp_id = int(time.time())
-    saved_image_path = f'static/images/saved-quotes/saved_quote_{timestamp_id}.jpg'
+    # Generate a timestamp ID as image_id for the new saved image
+    image_id = int(time.time())
+    saved_image_path = f'static/images/saved-quotes/saved_quote_{image_id}.jpg'
+
+    # Initialize quote_to_save dictionary
+    quote_to_save = {
+        "image_id": image_id,
+        "image_path": saved_image_path
+        }
+
 
     # Copy the current image to the new saved image
     shutil.copy(image_path, saved_image_path)
@@ -116,10 +123,9 @@ def save_quote_image():
         session['saved_quotes'] = []  
     
     # Add the quote to the saved_quotes list
-    session['saved_quotes'].append(f'saved_quote_{timestamp_id}.jpg')
+    session['saved_quotes'].append(quote_to_save)
 
     return jsonify({'message': 'Quote saved successfully!'}), 200
-
 
 @app.route("/saved-quotes")
 def saved_quotes():
@@ -129,6 +135,30 @@ def saved_quotes():
     # Ensure that saved_quotes list is exist incase of empty saved quotes
     saved_quotes = session.get('saved_quotes', [])
     return render_template("saved_quotes.html", saved_quotes=saved_quotes)
+
+@app.route("/remove-quote", methods=["POST"])
+def remove_quote():
+    """
+    Remove a saved quote from the list.
+    Expects JSON data with "image_id" identifying the quote.
+    """
+    data = request.json
+    image_id = data.get("image_id")
+
+    # Check if the image_id exists
+    if not image_id:
+        return jsonify({"error": "Invalid request, missing image_id"}), 400
+    
+    # Remove the quote from saved_quotes
+    if "saved_quotes" in session:
+        saved_quotes = session["saved_quotes"]
+        updated_quotes = [quote for quote in saved_quotes if quote["image_id"] != image_id]
+        session["saved_quotes"] = updated_quotes
+
+        return jsonify({"message": "Quote removed successfully!"}), 200
+    
+    return jsonify({"error": "No saved quotes found"}), 400
+
 
 if __name__ == "__main__":
     app.run(debug=True)
