@@ -16,9 +16,9 @@
     {% if saved_quotes %}
         <div class="saved-quotes-container">
             {% for quote in saved_quotes %}
-                <div class="saved-quote" data-image-id="{{ quote.image_id }}">
-                    <img class="quote-image" src="{{ quote.image_path }}" alt="Image">
-                    <button class="remove-button" data-image-id="{{ quote.image_id }}">
+                <div class="saved-quote-container">
+                    <img class="saved-quote" src="{{ quote.image_path }}" alt="Image">
+                    <button class="heart-button" image_id="{{ quote.image_id }}">
                         &#10084;
                     </button>
                 </div>
@@ -27,4 +27,9 @@
     {% else %}
         <p>No saved quotes yet.</p>
     {% endif %}
+{% endblock %}
+
+{% block script %}
+    <!-- Link to javascript file -->
+    <script src="/static/js/saved-quotes.js"></script>
 {% endblock %}
