@@ -12,18 +12,18 @@
     width: 95%;
 }
 
-.saved-quote {
+.saved-quote-container {
     position: relative;
 }
 
-.quote-image {
+.saved-quote {
     width: 100%;
     border-radius: 10px;
 
     cursor: pointer;
 }
 
-.remove-button {
+.heart-button {
     background: none;
     border: none;
     padding: 0;
@@ -32,11 +32,16 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    color: white;
-    transition: transform 0.2s ease;
+    color: red; 
+    transition: transform 0.3s ease;
 }
 
-.remove-button:hover {
+/* When clicked, the heart turns white */
+.heart-button.clicked {
+    color: white;
+}
+
+.heart-button:hover {
     transform: scale(1.2);
 }
 
@@ -47,7 +52,7 @@
         column-gap: 10px;
     }
 
-    .remove-button {
+    .heart-button {
         font-size: 24px;
     }
 }
@@ -58,7 +63,7 @@
         grid-template-columns: 1fr 1fr 1fr;
     }
 
-    .remove-button {
+    .heart-button {
         font-size: 24px;
     }
 }
