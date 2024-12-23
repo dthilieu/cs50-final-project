@@ -136,7 +136,7 @@ def saved_quotes():
     saved_quotes = session.get('saved_quotes', [])
     return render_template("saved_quotes.html", saved_quotes=saved_quotes)
 
-@app.route("/remove-quote", methods=["POST"])
+@app.route("/remove-saved-quote", methods=["POST"])
 def remove_quote():
     """
     Remove a saved quote from the list.
@@ -151,9 +151,8 @@ def remove_quote():
     
     # Remove the quote from saved_quotes
     if "saved_quotes" in session:
-        saved_quotes = session["saved_quotes"]
-        updated_quotes = [quote for quote in saved_quotes if quote["image_id"] != image_id]
-        session["saved_quotes"] = updated_quotes
+        session["saved_quotes"] = [quote for quote in session["saved_quotes"] if quote["image_id"] != image_id]
+        session.modified = True
 
         return jsonify({"message": "Quote removed successfully!"}), 200
     
