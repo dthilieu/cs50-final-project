@@ -1,5 +1,7 @@
-from flask import Flask, render_template, session, jsonify, request
+from cs50 import SQL
+from flask import Flask, flash, redirect, render_template, session, jsonify, request
 from flask_session import Session
+from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import get_random_quote, get_random_image, write_quote_on_image, apology, clear_saved_quotes_folder
 import time, os, shutil
 import copy
@@ -12,27 +14,16 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# Configure CS50 Library to use SQLite database
+db = SQL("sqlite:///quote-generator.db")
+
 # Required to use sessions
 app.secret_key = 'supersecretkey'  
 
 @app.route("/")
 def index():
     """
-    # Check if the request is an AJAX (fetch) request
-    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
-        # Only clear session during a full page load, not for fetch requests
-        session.clear()
-        
-        # Path to the previous quote image
-        previous_image_path = os.path.join(app.static_folder, 'images', 'previous_quote_image.jpg')
-
-        # Path to the current quote image
-        current_image_path = os.path.join(app.static_folder, 'images', 'quote_image.jpg')
-
-        # Check if the file exists and delete it to reset
-        for image_path in [previous_image_path, current_image_path]:
-            if os.path.exists(image_path):
-                os.remove(image_path)
+    Show random generated quote
     """
   
     # Check if the request is an AJAX (fetch) request
@@ -59,37 +50,112 @@ def index():
         # If error, show apology
         return apology(photo[0], photo[1])
 
-"""
-@app.route("/save", methods=["POST"])
-def save_quote_image():
-    # Save current displayed quote image information {quote, author, image_id}
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    """
+    Register user
+    """
 
-    # Get the JSON data from the frontend
-    data = request.json  
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+        username= request.form.get("username")
+        password = request.form.get("password")
+        confirmation = request.form.get("confirmation")
 
-    # Get whether the current image is "current" or "previous"
-    source = data.get('source')  
-    
-    # Determine which quote is being saved based on source
-    if source == 'current':
-        quote_to_save = session['current_quote']
+        # Validate name and password
+        if not username and not password:
+            return apology("Missing Username and Password")
+        elif not username:
+            return apology("Missing Username")
+        elif not password:
+            return apology("Missing Password")
+
+        # Validate password confirmation
+        elif not confirmation:
+            return apology("Missing Password Confirmation")
+        elif password != confirmation:
+            return apology("The passwords do not match")
+        
+        # Check if the username already exists
+        try:
+            db.execute("INSERT INTO users (username, hash) VALUES (?, ?)",
+                       username, generate_password_hash(password))
+        except ValueError:
+            return apology("The username already exists")
+        
+        # Query database for username
+        rows = db.execute("SELECT * FROM users WHERE username = ?", username)
+
+        # Remember which user has logged in
+        session["user_id"] = rows[0]["id"]
+
+        # Record flash message
+        flash("Register!")
+
+        # Redirect user to home page
+        return redirect("/")
+
+    # User reached route via GET (as by clicking a link or via redirect)
     else:
-        quote_to_save = session['previous_quote']
+        return render_template("register.html")
 
-    # Save the quote in the session under 'saved_quotes'
-    if 'saved_quotes' not in session:
-        session['saved_quotes'] = []  # Initialize the list if not present
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """
+    Log user in
+    """
 
-    # Add the quote to the saved_quotes list
-    session['saved_quotes'].append(quote_to_save)
+    # Forgt any user_id
+    session.clear()
 
-    return jsonify({'message': 'Quote saved successfully!'}), 200
-"""
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            return apology("must provide username", 403)
+        
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            return apology("must provide password", 403)
+        
+        # Query database for username
+        rows = db.execute(
+            "SELECT * FROM users WHERE usersname = ?", request.form.get("username")
+            )
+        
+        # Ensure username exists and password is correct
+        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+            return apology("invalid username and/ or password", 403)
+        
+        # Remember which user has logged in
+        session["user_id"] = rows[0]["id"]
+
+        # Record flash message
+        flash("Log in!")
+
+        # Redirect user to homepage
+        return redirect("/")
+    
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("login.html")
+    
+@app.route("/logout")
+def logout():
+    """
+    Log user out
+    """
+
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to homepage
+    return redirect("/")
 
 @app.route("/save", methods=["POST"])
 def save_quote_image():
     """
-    Save current displayed quote image information {quote, author, image_id}
+    Save current displayed quote image information {image_id, image_path}
     """
     # Get the JSON data from the frontend
     data = request.json  

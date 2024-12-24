@@ -19,8 +19,6 @@
 .saved-quote {
     width: 100%;
     border-radius: 10px;
-
-    cursor: pointer;
 }
 
 .heart-button {
