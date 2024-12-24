@@ -20,10 +20,53 @@ body {
 
 header {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
 
     padding: 20px;
 }
+
+/* General logo container */
+.logo {
+    font-family: 'Comic Neue';
+    text-align: center;
+    text-transform: uppercase;
+    line-height: 1.2;
+    letter-spacing: 0.1em;
+
+    text-decoration: none;
+
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Main title styling */
+  .logo span {
+    font-size: 24px; /* Adjust for the logo's importance */
+    color: white;
+  }
+  
+  /* Sub-title styling */
+  .subtitle {
+    font-size: 16px;
+    color: black   ; /* Softer gray for distinction */
+
+    border: 1px solid white;
+    padding: 5px;
+    margin-left: 5px;
+    border-radius: 10px;
+    background-color: white;
+  }
+  
+  
+  /* Add responsive scaling for smaller screens */
+  @media (max-width: 768px) {
+    .logo span {
+      font-size: 20px;
+    }
+    .subtitle {
+      font-size: 14px;
+    }
+  }
 
 .container {
     display: flex;

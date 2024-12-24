@@ -15,10 +15,17 @@
 
         <title>Quote Generator: {% block title %}{% endblock %}</title>
 
+        <!-- Link to Google font -->
+        <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+
     </head>
     
     <body>
         <header>
+            <a class="logo" href="/">
+                <span>QUOTE</span>
+                <div class="subtitle">Generator</div>
+            </a>
             <div class="btn-function" id="navigateButton">
                 {% block header %}{% endblock %}
             </div>
