@@ -21,15 +21,28 @@
     </head>
     
     <body>
-        <header>
+        <nav>
             <a class="logo" href="/">
                 <span>QUOTE</span>
                 <div class="subtitle">Generator</div>
             </a>
+
             <div class="btn-function" id="navigateButton">
-                {% block header %}{% endblock %}
+                {% block nav %}{% endblock %}
             </div>
-        </header>
+
+            {% if session["user_id"] %}
+                <div>
+                    <div>Saved Quotes</div>
+                    <div>Log out</div>
+                </div>
+            {% else %}
+                <div>
+                    <div>Register</div>
+                    <div>Log in</div>
+                </div>
+            {% endif %}
+        </nav>
         
         <main class="container">
             {% block main %}{% endblock %}
