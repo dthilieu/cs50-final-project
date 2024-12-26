@@ -1,31 +1,21 @@
 {% extends "layout.html" %}
 
+{% block link %}
+    <link rel="stylesheet" href="../static/css/register.css">
+{% endblock %}
+
 {% block title %}
     Register
 {% endblock %}
 
 {% block main %}
-    <form action="/register" method="post">
-        <div>
-            <input type="text" autocomplete="off" autofocus name="username" placeholder="Username">
-        </div>
-        <div>
-            <input type="password" name="password" placeholder="Password">
-        </div>
-        <div>
-            <input type="password" name="confirmation" placeholder="Confirmation">
-        </div>
-        <button type="submit">Register</button>
+    <form class="register-form" action="/register" method="post">
+        <input class="register-infor" type="text" autocomplete="off" autofocus name="username" placeholder="Username" required>
+        
+        <input class="register-infor" type="password" name="password" placeholder="Password" required>
+        
+        <input class="register-infor" type="password" name="confirmation" placeholder="Password (again)" required>
 
-        <!-- <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="username" placeholder="Username" type="text">
-        </div>
-        <div class="mb-3">
-            <input class="form-control mx-auto w-auto" name="password" placeholder="Password" type="password">
-        </div>
-        <div class="mb-3">
-            <input class="form-control mx-auto w-auto" name="confirmation" placeholder="Confirm Password" type="password">
-        </div>
-        <button class="btn btn-primary" type="submit">Register</button> -->
+        <button class="btn-function" type="submit">Register</button>
     </form>
 {% endblock %}

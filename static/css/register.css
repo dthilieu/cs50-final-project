@@ -1,0 +1,13 @@
+.register-form {
+    text-align: center;
+}
+
+.register-infor {
+    display: block;
+    color: black;
+    text-align: left;
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
