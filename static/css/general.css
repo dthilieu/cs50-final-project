@@ -3,6 +3,8 @@
     padding: 0;
     box-sizing: border-box;
     color: var(--White);
+    font-family: 'Comic Neue', sans-serif;
+
 }
 
 body {
@@ -34,7 +36,6 @@ nav {
 
 /* General logo container */
 .logo {
-    font-family: 'Comic Neue';
     text-align: center;
     text-transform: uppercase;
     line-height: 1.2;
@@ -98,6 +99,12 @@ nav {
     display: flex;
     width: 150px;
     justify-content: space-between;
+}
+
+.alert {
+  margin-top: 10px;
+  color: white;
+  text-align: center;
 }
 
 .container {

@@ -90,10 +90,10 @@ def register():
         session["user_id"] = rows[0]["id"]
 
         # Record flash message
-        flash("Register!")
+        flash("Account created successfully! You can now log in.")
 
         # Redirect user to home page
-        return redirect("/")
+        return redirect("/login")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -105,8 +105,7 @@ def login():
     Log user in
     """
 
-    # Forgt any user_id
-    session.clear()
+    session.pop("user_id", None)
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
@@ -130,9 +129,6 @@ def login():
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
 
-        # Record flash message
-        flash("Log in!")
-
         # Redirect user to homepage
         return redirect("/")
     
@@ -149,8 +145,10 @@ def logout():
     # Forget any user_id
     session.clear()
 
+    flash("Logged out!")
+
     # Redirect user to homepage
-    return redirect("/")
+    return redirect("/login")
 
 @app.route("/save", methods=["POST"])
 def save_quote_image():
