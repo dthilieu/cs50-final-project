@@ -1,8 +1,8 @@
-.register-form {
+.form-container {
     text-align: center;
 }
 
-.register-infor {
+.form-infor {
     display: block;
     color: black;
     text-align: left;

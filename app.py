@@ -120,7 +120,7 @@ def login():
         
         # Query database for username
         rows = db.execute(
-            "SELECT * FROM users WHERE usersname = ?", request.form.get("username")
+            "SELECT * FROM users WHERE username = ?", request.form.get("username")
             )
         
         # Ensure username exists and password is correct
