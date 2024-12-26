@@ -22,26 +22,26 @@
     
     <body>
         <nav>
-            <a class="logo" href="/">
-                <span>QUOTE</span>
-                <div class="subtitle">Generator</div>
-            </a>
-
-            <div class="btn-function" id="navigateButton">
-                {% block nav %}{% endblock %}
+            <div class="left-section">
+                <a class="logo" href="/">
+                    <span>QUOTE</span>
+                    <div class="subtitle">Generator</div>
+                </a>
+    
+                <div class="navigate-btn" id="navigateButton">
+                    {% block nav %}{% endblock %}
+                </div>
             </div>
 
-            {% if session["user_id"] %}
-                <div>
+            <div class="right-section">
+                {% if session["user_id"] %}
                     <div>Saved Quotes</div>
                     <div>Log out</div>
-                </div>
-            {% else %}
-                <div>
+                {% else %}
                     <div>Register</div>
                     <div>Log in</div>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
         </nav>
         
         <main class="container">
