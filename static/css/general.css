@@ -78,6 +78,7 @@ nav {
   }
 
 .navigate-btn {
+  text-decoration: none;
     padding: 0.7em;
     cursor: pointer;
     transform: background-color 0.3s,
