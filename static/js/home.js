@@ -92,7 +92,7 @@ document.getElementById("saveButton").addEventListener("click", function() {
     .then(response => {
         if (response.status === 401) {
             // User is not logged in, show login prompt
-            alert("Please log in to save quotes!")
+            showLoginPromt();
         } else if (response.ok) {
             // User is logged in, proceed with save
             saveQuote();
@@ -102,6 +102,15 @@ document.getElementById("saveButton").addEventListener("click", function() {
         console.error("Error:", error)
     });
 });
+
+// Prompt to redirect user to login 
+function showLoginPromt() {
+    const confirmLogin = confirm("You need to log in to save quotes. Do you want to log in now? ");
+    if (confirmLogin) {
+        // Redirect to login page
+        window.location.href = "/login"
+    }
+}
 
 // Function to handle the save quote proccess
 function saveQuote() {
@@ -126,7 +135,7 @@ function saveQuote() {
 
         // Force reflow to reset the animation
         savedMessage.offsetHeight;  
-        
+
         // Matches the duration of the animation
     }, 1500);  
 }
