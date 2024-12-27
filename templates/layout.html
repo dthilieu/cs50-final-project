@@ -62,8 +62,10 @@
             {% block main %}{% endblock %}
         </main>
 
-        <!-- Link to layout javascript file -->
-         <script src="/static/js/dashboard.js"></script>
+        {% if session["user_id"] %}
+            <!-- Link to layout javascript file -->
+            <script src="/static/js/dashboard.js"></script>
+        {% endif %}
 
         <!-- Link to specific javascript file -->
         {% block script %}{% endblock %}

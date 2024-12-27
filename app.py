@@ -2,7 +2,7 @@ from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, session, jsonify, request
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import get_random_quote, get_random_image, write_quote_on_image, apology, clear_saved_quotes_folder
+from helpers import get_random_quote, get_random_image, write_quote_on_image, clear_saved_quotes_folder
 import time, os, shutil
 import copy
 
@@ -48,7 +48,8 @@ def index():
         return render_template("index.html")
     except:
         # If error, show apology
-        return apology(photo[0], photo[1])
+        flash("Cannot generate quote! Please come back later.")
+        return redirect("/login")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -63,25 +64,20 @@ def register():
         confirmation = request.form.get("confirmation")
 
         # Validate name and password
-        if not username and not password:
-            return apology("Missing Username and Password")
-        elif not username:
-            return apology("Missing Username")
-        elif not password:
-            return apology("Missing Password")
-
-        # Validate password confirmation
-        elif not confirmation:
-            return apology("Missing Password Confirmation")
+        if (not username) or (not password) or (not confirmation):
+            flash("Missing required information!")
+            return redirect("/register")
         elif password != confirmation:
-            return apology("The passwords do not match")
+            flash("The passwords do not match!")
+            return redirect("/register")
         
         # Check if the username already exists
         try:
             db.execute("INSERT INTO users (username, hash) VALUES (?, ?)",
                        username, generate_password_hash(password))
         except ValueError:
-            return apology("The username already exists")
+            flash("The username already exists!")
+            return redirect("/register")
         
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = ?", username)
@@ -109,13 +105,10 @@ def login():
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-        # Ensure username was submitted
-        if not request.form.get("username"):
-            return apology("must provide username", 403)
-        
-        # Ensure password was submitted
-        elif not request.form.get("password"):
-            return apology("must provide password", 403)
+        # Ensure username and password was submitted
+        if not request.form.get("username") or not request.form.get("password"):
+            flash("Missing Username and/ or Password!")
+            return redirect("/login")
         
         # Query database for username
         rows = db.execute(
@@ -124,7 +117,8 @@ def login():
         
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
-            return apology("invalid username and/ or password", 403)
+            flash("Invalid username and/ or password!")
+            return redirect("/login")
         
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
