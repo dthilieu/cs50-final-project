@@ -13,6 +13,16 @@
 {% endblock %}
 
 {% block main %}
+    <div id="login-modal" class="modal hidden">
+        <div class="modal-content">
+            <div>You need to log in to save quotes. Do you want to log in now?</div>
+            <div class="modal-btn-container">
+                <button class="btn-function" id="login-button">Log in</button>
+                <button class="btn-function" id ="cancel-button">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <div class="card">
         <div class="image-container" id="imageContainer" data-source="current">
             <img class="quote-image" id="quoteImage" src="{{ url_for('static', filename='images/quote_image.jpg') }}" alt="image with quote">

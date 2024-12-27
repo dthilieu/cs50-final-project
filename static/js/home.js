@@ -92,7 +92,7 @@ document.getElementById("saveButton").addEventListener("click", function() {
     .then(response => {
         if (response.status === 401) {
             // User is not logged in, show login prompt
-            showLoginPromt();
+            showLoginModal();
         } else if (response.ok) {
             // User is logged in, proceed with save
             saveQuote();
@@ -103,13 +103,27 @@ document.getElementById("saveButton").addEventListener("click", function() {
     });
 });
 
-// Prompt to redirect user to login 
-function showLoginPromt() {
-    const confirmLogin = confirm("You need to log in to save quotes. Do you want to log in now? ");
-    if (confirmLogin) {
-        // Redirect to login page
-        window.location.href = "/login"
-    }
+function showLoginModal() {
+    const modal = document.getElementById("login-modal");
+    modal.classList.remove("hidden");
+
+    // Redirect to login page if clicked
+    document.getElementById("login-button").addEventListener("click", () => {
+        window.location.href = "/login";
+    });
+
+    // Close modal if clicked
+    document.getElementById("cancel-button").addEventListener ("click", () => {
+        modal.classList.add("hidden");
+        console.log("Action canceled.");
+    })
+
+    // Close modal if user clicks outside of it
+    window.addEventListener("click", function(event) {
+        if (event.target === modal) {
+            modal.classList.add("hidden");
+        }
+    })
 }
 
 // Function to handle the save quote proccess
