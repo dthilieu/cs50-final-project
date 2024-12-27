@@ -149,6 +149,12 @@ def save_quote_image():
     """
     Save current displayed quote image information {image_id, image_path}
     """
+
+    # Check if any user logged in
+    if "user_id" not in session:
+        # If not, return error code unauthorized
+        return jsonify({"error": "Not logged in"}), 401
+    
     # Get the JSON data from the frontend
     data = request.json  
 
@@ -215,7 +221,6 @@ def remove_quote():
         return jsonify({"message": "Quote removed successfully!"}), 200
     
     return jsonify({"error": "No saved quotes found"}), 400
-
 
 if __name__ == "__main__":
     app.run(debug=True)

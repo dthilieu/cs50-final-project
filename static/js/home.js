@@ -78,13 +78,10 @@ document.getElementById("previousButton").addEventListener("click", function() {
 
 // Save button clicked
 document.getElementById("saveButton").addEventListener("click", function() {
-    // Darken image
-    image.style.filter = "brightness(50%)";
-
     // Get the source of the displayed image (either 'current' or 'previous')
     const source = imageContainer.getAttribute('data-source');
 
-    // Send a POST request to save the current displayed quote image
+    // Fetch data to "/save" route
     fetch("/save", {
         method: "POST",
         headers: {
@@ -92,27 +89,44 @@ document.getElementById("saveButton").addEventListener("click", function() {
         },
         body: JSON.stringify({ source: source })  // Send the source in the request
     })
-    .then(response => response.json())
-    .then(data => {
-        // Log the success message
-        console.log(data.message);
-
-        // Trigger the "Saved!" message animation
-        savedMessage.style.opacity = 1;
-        savedMessage.style.animation = 'fadeInOut 1.5s ease forwards';
-
-        // After the animation
-        setTimeout(() => {
-            // Remove darkening
-            image.style.filter = "brightness(100%)";
-
-            // Reset opacity and animation for the "Saved!" message
-            savedMessage.style.opacity = 0;  // Reset opacity
-            savedMessage.style.animation = 'none';  // Reset animation
-            savedMessage.offsetHeight;  // Force reflow to reset the animation
-        }, 1500);  // Matches the duration of the animation
+    .then(response => {
+        if (response.status === 401) {
+            // User is not logged in, show login prompt
+            alert("Please log in to save quotes!")
+        } else if (response.ok) {
+            // User is logged in, proceed with save
+            saveQuote();
+        }
     })
-    .catch(error => {
-        console.error("Error:", error);
+    .catch( error => {
+        console.error("Error:", error)
     });
 });
+
+// Function to handle the save quote proccess
+function saveQuote() {
+    // Darken image
+    image.style.filter = "brightness(50%)";
+
+    // Trigger the "Saved!" message animation
+    savedMessage.style.opacity = 1;
+    savedMessage.style.animation = 'fadeInOut 1.5s ease forwards';
+
+    // After the animation
+    setTimeout(() => {
+        // Remove darkening
+        image.style.filter = "brightness(100%)";
+
+        // Reset opacity and animation for the "Saved!" message
+        // Reset opacity
+        savedMessage.style.opacity = 0;  
+
+        // Reset animation
+        savedMessage.style.animation = 'none';  
+
+        // Force reflow to reset the animation
+        savedMessage.offsetHeight;  
+        
+        // Matches the duration of the animation
+    }, 1500);  
+}
