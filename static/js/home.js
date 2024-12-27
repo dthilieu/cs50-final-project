@@ -109,7 +109,19 @@ function showLoginModal() {
 
     // Redirect to login page if clicked
     document.getElementById("login-button").addEventListener("click", () => {
-        window.location.href = "/login";
+        const currentQuote = image.src;
+
+        // Send request to store intent quote in session
+        fetch("/store-intent", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(currentQuote)
+        })
+        .then(() => {
+            // Redirect to login page after storing intent
+            window.location.href = "/login";
+        })
+        .catch((error) => console.error("Error:", error));
     });
 
     // Close modal if clicked

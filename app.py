@@ -32,6 +32,12 @@ def index():
          session.pop('saved_quotes', None)
          clear_saved_quotes_folder(app.static_folder)
 
+    # Retrieve and clear intent_quote if any
+    intent_quote = session.pop("intent_quote", None)
+    if intent_quote:
+        # Render the stored intent quote
+        return render_template("index.html")
+
     # Get random quote from API
     quote_data = get_random_quote()
 
@@ -221,6 +227,19 @@ def remove_quote():
         return jsonify({"message": "Quote removed successfully!"}), 200
     
     return jsonify({"error": "No saved quotes found"}), 400
+
+@app.route("/store-intent", methods=["POST"])
+def store_intent():
+    """
+    Store intent quote before redirect to log in page from login modal.
+    """
+    # Get quote data from the request
+    intent_quote = request.json  
+
+    # Save it in the session
+    session["intent_quote"] = intent_quote
+
+    return jsonify({"message": "Intent stored successfully"}), 200
 
 if __name__ == "__main__":
     app.run(debug=True)
