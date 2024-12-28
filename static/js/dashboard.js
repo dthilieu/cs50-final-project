@@ -5,7 +5,7 @@ navigateButton.addEventListener("click", function() {
     // If navigate button is Saved Quotes
     if (navigateButton.textContent.trim() === "Saved Quotes") {
         // Redirect to the /saved-quotes route
-        window.location.href = "/saved-quotes"; 
+        window.location.href = "/get-saved-quotes"; 
     } 
     // If navigate button is Homepage
     else if (navigateButton.textContent.trim() === "Generate Quotes") {

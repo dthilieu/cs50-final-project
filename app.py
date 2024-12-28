@@ -25,12 +25,6 @@ def index():
     """
     Show random generated quote
     """
-  
-    # Check if the request is an AJAX (fetch) request
-    if request.headers.get('X-Requested-With') != 'XMLHttpRequest':
-        # Only clear saved_quotes session during a full page load, not for fetch requests
-         session.pop('saved_quotes', None)
-         clear_saved_quotes_folder(app.static_folder)
 
     # Retrieve and clear intent_quote if any
     intent_quote = session.pop("intent_quote", None)
@@ -162,7 +156,10 @@ def save_quote_image():
         return jsonify({"error": "Not logged in"}), 401
     
     # Get the JSON data from the frontend
-    data = request.json  
+    data = request.json
+
+    # Get user_id from session
+    user_id = session["user_id"]
 
     # Get whether the current image is "current" or "previous"
     source = data.get('source')  
@@ -177,33 +174,23 @@ def save_quote_image():
     image_id = int(time.time())
     saved_image_path = f'static/images/saved-quotes/saved_quote_{image_id}.jpg'
 
-    # Initialize quote_to_save dictionary
-    quote_to_save = {
-        "image_id": image_id,
-        "image_path": saved_image_path
-        }
-
-
     # Copy the current image to the new saved image
     shutil.copy(image_path, saved_image_path)
 
-    # Initialize saved_quotes in the session if it doesn't exist
-    if 'saved_quotes' not in session:
-        # Initialize the list if not present
-        session['saved_quotes'] = []  
-    
-    # Add the quote to the saved_quotes list
-    session['saved_quotes'].append(quote_to_save)
+    # Save quote into the database
+    db.execute("INSERT INTO saved_quotes (user_id, image_id, image_path) VALUES (?, ?, ?)",
+               user_id, image_id, saved_image_path)
 
     return jsonify({'message': 'Quote saved successfully!'}), 200
 
-@app.route("/saved-quotes")
+@app.route("/get-saved-quotes")
 def saved_quotes():
     """
     Get a list of current saved quotes and display using HTML
     """
-    # Ensure that saved_quotes list is exist incase of empty saved quotes
-    saved_quotes = session.get('saved_quotes', [])
+    # Get saved quote list from database
+    saved_quotes = db.execute("SELECT * FROM saved_quotes WHERE user_id = ?", session["user_id"])
+
     return render_template("saved_quotes.html", saved_quotes=saved_quotes)
 
 @app.route("/remove-saved-quote", methods=["POST"])
