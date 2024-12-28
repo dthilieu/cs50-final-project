@@ -160,6 +160,14 @@ def save_quote_image():
 
     # Get user_id from session
     user_id = session["user_id"]
+    
+    # Check if this is a re-save request
+    if request.headers.get("X-Requested-With") == "Fetch":
+        # Re-save quote into the database
+        db.execute("INSERT INTO saved_quotes (user_id, image_id, image_path) VALUES (?, ?, ?)",
+                user_id, data.get("image_id"), data.get("image_path"))
+
+        return jsonify({'message': 'Quote saved successfully!'}), 200
 
     # Get whether the current image is "current" or "previous"
     source = data.get('source')  

@@ -17,7 +17,7 @@
         <div class="saved-quotes-container">
             {% for quote in saved_quotes %}
                 <div class="saved-quote-container">
-                    <img class="saved-quote" src="{{ quote.image_path }}" alt="Image">
+                    <img class="saved-quote" id="{{ quote.image_id }}" src="{{ quote.image_path }}" alt="Image">
                     <button class="heart-button" image_id="{{ quote.image_id }}">
                         &#10084;
                     </button>
