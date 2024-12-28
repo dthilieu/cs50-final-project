@@ -207,13 +207,13 @@ def remove_quote():
         return jsonify({"error": "Invalid request, missing image_id"}), 400
     
     # Remove the quote from saved_quotes
-    if "saved_quotes" in session:
-        session["saved_quotes"] = [quote for quote in session["saved_quotes"] if quote["image_id"] != image_id]
-        session.modified = True
+    try:
+        db.execute("DELETE FROM saved_quotes WHERE user_id=? AND image_id=?", 
+               session["user_id"], image_id)
 
         return jsonify({"message": "Quote removed successfully!"}), 200
-    
-    return jsonify({"error": "No saved quotes found"}), 400
+    except:
+        return jsonify({"error": "No saved quotes found"}), 400
 
 @app.route("/store-intent", methods=["POST"])
 def store_intent():
