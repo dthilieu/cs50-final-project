@@ -2,7 +2,7 @@ from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, session, jsonify, request
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import get_random_quote, get_random_image, write_quote_on_image, clear_saved_quotes_folder
+from helpers import get_random_quote, get_random_image, write_quote_on_image, login_required
 import time, os, shutil
 import copy
 
@@ -161,7 +161,7 @@ def logout():
 
     # Delete unused/ unsaved quote images at log out
     clean_unused_quote_images()    
-    
+
     # Forget any user_id
     session.clear()
 
@@ -217,6 +217,7 @@ def save_quote_image():
     return jsonify({'message': 'Quote saved successfully!'}), 200
 
 @app.route("/get-saved-quotes")
+@login_required
 def saved_quotes():
     """
     Get a list of current saved quotes and display using HTML
@@ -227,6 +228,7 @@ def saved_quotes():
     return render_template("saved_quotes.html", saved_quotes=saved_quotes)
 
 @app.route("/remove-saved-quote", methods=["POST"])
+@login_required
 def remove_quote():
     """
     Remove a saved quote from the list.
