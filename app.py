@@ -164,8 +164,7 @@ def save_quote_image():
     # Check if this is a re-save request
     if request.headers.get("X-Requested-With") == "Fetch":
         # Re-save quote into the database
-        db.execute("INSERT INTO saved_quotes (user_id, image_id, image_path) VALUES (?, ?, ?)",
-                user_id, data.get("image_id"), data.get("image_path"))
+        db.execute("UPDATE saved_quotes SET is_deleted = ? WHERE user_id = ? AND image_id = ?", "FALSE", session["user_id"], data.get("image_id"))
 
         return jsonify({'message': 'Quote saved successfully!'}), 200
 
@@ -197,7 +196,7 @@ def saved_quotes():
     Get a list of current saved quotes and display using HTML
     """
     # Get saved quote list from database
-    saved_quotes = db.execute("SELECT * FROM saved_quotes WHERE user_id = ?", session["user_id"])
+    saved_quotes = db.execute('SELECT * FROM saved_quotes WHERE user_id = ? AND is_deleted = ?', (session["user_id"]), "FALSE")
 
     return render_template("saved_quotes.html", saved_quotes=saved_quotes)
 
@@ -214,10 +213,9 @@ def remove_quote():
     if not image_id:
         return jsonify({"error": "Invalid request, missing image_id"}), 400
     
-    # Remove the quote from saved_quotes
+    # Update is_deleted status in saved_quotes
     try:
-        db.execute("DELETE FROM saved_quotes WHERE user_id=? AND image_id=?", 
-               session["user_id"], image_id)
+        db.execute("UPDATE saved_quotes SET is_deleted = ? WHERE user_id = ? AND image_id = ?", "TRUE", session["user_id"], image_id)
 
         return jsonify({"message": "Quote removed successfully!"}), 200
     except:
