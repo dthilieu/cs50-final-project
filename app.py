@@ -4,7 +4,9 @@ from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import get_random_quote, get_random_image, write_quote_on_image, login_required
 import time, os, shutil
-import copy
+import schedule
+import threading
+from random import randint
 
 # Configure application
 app = Flask(__name__)
@@ -19,6 +21,30 @@ db = SQL("sqlite:///quote-generator.db")
 
 # Required to use sessions
 app.secret_key = 'supersecretkey'  
+
+def save_random_image_urls():
+    # Delete all previous request saved image urls
+    db.execute("DELETE FROM image_urls")
+
+    # Get image_urls from new request
+    image_urls = [image["urls"]["regular"] for image in get_random_image()]
+
+    # Add new image_urls into database
+    for url in image_urls:
+        db.execute("INSERT INTO image_urls (url) VALUES (?)", url)
+    
+    # Confirm updated successfully
+    print("New image urls updated!")
+
+def run_scheduler():
+    schedule.every(1).hour.do(save_random_image_urls)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+# Start the scheduler in a separate thread
+scheduler_thread = threading.Thread(target=run_scheduler, daemon=True)
+scheduler_thread.start()
 
 @app.route("/")
 def index():
@@ -40,11 +66,11 @@ def index():
     author = "-" + quote_data[0]["a"]
 
     # Get random photo from API
-    photo = get_random_image()
+    photo = db.execute("SELECT url FROM image_urls WHERE id = ?", randint(1, 30))[0]["url"]
 
     # Make sure image response is 200 no error
     try:
-        write_quote_on_image(quote, author, photo["urls"]["regular"])
+        write_quote_on_image(quote, author, photo)
         return render_template("index.html")
     except:
         # If error, show apology

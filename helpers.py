@@ -48,7 +48,8 @@ def get_random_image():
 
     params = {
         "query": "nature",
-        "orientation": "landscape"
+        "orientation": "landscape",
+        "count": 30
     }
 
     # Make the request
@@ -59,6 +60,7 @@ def get_random_image():
         image = response.json()
         return image
     else:
+        print(response.status_code)
         return "Too much request, slow down!", response.status_code
 
 def write_quote_on_image(quote, author, image_url):
@@ -99,11 +101,20 @@ def write_quote_on_image(quote, author, image_url):
         
         # Draw each line on the image
         y_position = position[1]
+
+        # Determine space between lines based on font size
+        if font_size == 60:
+            extra_y_position = 85
+        elif font_size == 70:
+            extra_y_position = 95
+        else:
+            extra_y_position = 105
+    
         for line in lines:
             draw.text((position[0], y_position), line, font=font, fill="white")
 
             # Move to the next line
-            y_position += getsize(font, line)[1] * 1.5  
+            y_position += extra_y_position
         
         # Load font for author
         font_path = "static/fonts/ComicNeue-Italic.ttf"
@@ -128,10 +139,10 @@ def write_quote_on_image(quote, author, image_url):
     draw = ImageDraw.Draw(dark_img)
 
     # Define quote first line position
-    quote_position = (100, 100)
+    quote_position = (70, 100)
 
     # Image width to wrap the text, considering margins
-    max_width = img.width - (1.6 * quote_position[0] )
+    max_width = img.width - (1.4 * quote_position[0] )
 
     # Length of quote
     quote_length = len(quote.split())
