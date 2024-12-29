@@ -5,4 +5,5 @@ secrets.txt
 PlayfairDisplay-Bold.ttf
 kill-process.py
 flask_session/
-/static/images/*
+/static/images/*.jpg
+/static/images/saved-quotes
