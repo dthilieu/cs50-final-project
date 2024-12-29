@@ -2,7 +2,7 @@ from cs50 import SQL
 from flask import Flask, flash, redirect, render_template, session, jsonify, request
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import get_random_quote, get_random_image, write_quote_on_image, login_required
+from helpers import get_random_quote, get_random_image, write_quote_on_image, login_required, clean_unused_quote_images
 import time, os, shutil
 import schedule
 import threading
@@ -22,12 +22,15 @@ db = SQL("sqlite:///quote-generator.db")
 # Required to use sessions
 app.secret_key = 'supersecretkey'  
 
-def save_random_image_urls():
+def schedule_update_and_clean():
     # Delete all previous request saved image urls
     db.execute("DELETE FROM image_urls")
 
     # Delete all previous request quotes
     db.execute("DELETE FROM quotes")
+
+    # Delete all unused quote images
+    clean_unused_quote_images()
 
     # Get image_urls from new request
     image_urls = [image["urls"]["regular"] for image in get_random_image()]
@@ -44,10 +47,10 @@ def save_random_image_urls():
         db.execute("INSERT INTO quotes (quote, author) VALUES (?, ?)", quote["q"], quote["a"])
     
     # Confirm updated successfully
-    print("New image urls and quotes updated!")
+    print("New image urls and quotes updated, unused quote images are deleted!")
 
 def run_scheduler():
-    schedule.every(30).minutes.do(save_random_image_urls)
+    schedule.every(30).minutes.do(schedule_update_and_clean)
     while True:
         schedule.run_pending()
         time.sleep(1)
@@ -170,34 +173,7 @@ def login():
 def logout():
     """
     Log user out
-    """
-
-    def clean_unused_quote_images():
-        """
-        Delete all unused quote images in saved-quotes folder.
-        """
-        # Folder to clean
-        saved_quotes_folder = os.path.join("static", "images", "saved-quotes")
-
-        # Valid quote image path
-        query = db.execute("SELECT image_path FROM saved_quotes WHERE is_deleted = ?", "FALSE")
-        valid_image_path = {row["image_path"] for row in query}
-        
-        # List all files in the folder
-        all_files = {os.path.join(saved_quotes_folder, f) for f in os.listdir(saved_quotes_folder)}
-
-        # FInd unused files
-        unused_files = all_files - valid_image_path
-
-        # Remove unused files
-        for file_path in unused_files:
-            if os.path.isfile(file_path):
-                os.remove(file_path)
-                print(f"Deleted unused file: {file_path}")
-
-    # Delete unused/ unsaved quote images at log out
-    clean_unused_quote_images()    
-
+    """ 
     # Forget any user_id
     session.clear()
 

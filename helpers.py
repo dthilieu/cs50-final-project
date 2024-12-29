@@ -2,9 +2,13 @@ import requests
 from PIL import Image, ImageDraw, ImageFont, ImageEnhance
 from io import BytesIO
 import os
+from cs50 import SQL
 
 from flask import redirect, session
 from functools import wraps
+
+# Configure CS50 Library to use SQLite database
+db = SQL("sqlite:///quote-generator.db")
 
 def login_required(f):
     """
@@ -170,6 +174,29 @@ def write_quote_on_image(quote, author, image_url):
 
     # Save the modified image
     dark_img.save("static/images/quote_image.jpg")
+
+def clean_unused_quote_images():
+    """
+    Delete all unused quote images in saved-quotes folder.
+    """
+    # Folder to clean
+    saved_quotes_folder = os.path.join("static", "images", "saved-quotes")
+
+    # Valid quote image path
+    query = db.execute("SELECT image_path FROM saved_quotes WHERE is_deleted = ?", "FALSE")
+    valid_image_path = {row["image_path"] for row in query}
+    
+    # List all files in the folder
+    all_files = {os.path.join(saved_quotes_folder, f) for f in os.listdir(saved_quotes_folder)}
+
+    # FInd unused files
+    unused_files = all_files - valid_image_path
+
+    # Remove unused files
+    for file_path in unused_files:
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+            print(f"Deleted unused file: {file_path}")
 
 
 
