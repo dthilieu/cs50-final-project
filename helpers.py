@@ -25,7 +25,7 @@ def get_random_quote():
     """Get any random quote from ZenQuotes API."""
 
     # ZenQuotes API
-    url = "https://zenquotes.io/api/random"
+    url = "https://zenquotes.io/api/quotes"
     
     # Query API
     try:

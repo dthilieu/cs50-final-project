@@ -26,18 +26,28 @@ def save_random_image_urls():
     # Delete all previous request saved image urls
     db.execute("DELETE FROM image_urls")
 
+    # Delete all previous request quotes
+    db.execute("DELETE FROM quotes")
+
     # Get image_urls from new request
     image_urls = [image["urls"]["regular"] for image in get_random_image()]
 
     # Add new image_urls into database
     for url in image_urls:
         db.execute("INSERT INTO image_urls (url) VALUES (?)", url)
+
+    # Get quotes from new request
+    quotes = get_random_quote()
+
+    # Add new quotes into database
+    for quote in quotes:
+        db.execute("INSERT INTO quotes (quote, author) VALUES (?, ?)", quote["q"], quote["a"])
     
     # Confirm updated successfully
-    print("New image urls updated!")
+    print("New image urls and quotes updated!")
 
 def run_scheduler():
-    schedule.every(1).hour.do(save_random_image_urls)
+    schedule.every(30).minutes.do(save_random_image_urls)
     while True:
         schedule.run_pending()
         time.sleep(1)
@@ -59,14 +69,14 @@ def index():
         return render_template("index.html")
 
     # Get random quote from API
-    quote_data = get_random_quote()
+    quote_data = db.execute("SELECT quote, author FROM quotes WHERE rowid = ?", randint(1, 50))[0]
 
     # Change quote and author format
-    quote = '"' + quote_data[0]["q"].strip() + '"'
-    author = "-" + quote_data[0]["a"]
+    quote = '"' + quote_data["quote"].strip() + '"'
+    author = "-" + quote_data["author"]
 
     # Get random photo from API
-    photo = db.execute("SELECT url FROM image_urls WHERE id = ?", randint(1, 30))[0]["url"]
+    photo = db.execute("SELECT url FROM image_urls WHERE rowid = ?", randint(1, 30))[0]["url"]
 
     # Make sure image response is 200 no error
     try:
