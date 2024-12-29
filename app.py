@@ -3,7 +3,7 @@ from flask import Flask, flash, redirect, render_template, session, jsonify, req
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import get_random_quote, get_random_image, write_quote_on_image, login_required, clean_unused_quote_images
-import time, os, shutil
+import time, shutil
 import schedule
 import threading
 from random import randint
@@ -23,7 +23,7 @@ db = SQL("sqlite:///quote-generator.db")
 app.secret_key = 'supersecretkey'  
 
 def schedule_update_and_clean():
-    # Delete all previous request saved image urls
+    # Delete all previous request image urls
     db.execute("DELETE FROM image_urls")
 
     # Delete all previous request quotes
